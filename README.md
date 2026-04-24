@@ -423,3 +423,76 @@ Exception Filters  ← Unhandled exception handling
      ↓
 Client Response
 ```
+---
+
+# Node.js vs NestJS
+
+---
+
+## What is Node.js?
+
+Node.js is a **JavaScript runtime** built on Chrome's V8 engine. It is not a framework — it is the environment that allows JavaScript to run outside the browser. It provides low-level built-in modules (fs, http, stream, crypto, etc.) but imposes no structure on how you build your application. You decide everything.
+
+## What is NestJS?
+
+NestJS is a **backend framework that runs on top of Node.js**. It uses Express (or Fastify) under the hood and adds a structured, opinionated layer on top. It is heavily inspired by Angular and is built with TypeScript at its core.
+
+> **One-line summary**: Node.js is the engine. NestJS is the car built on that engine.
+
+---
+
+## Key Differences
+
+| | Node.js | NestJS |
+|---|---|---|
+| **Type** | JavaScript runtime | Backend framework |
+| **Language** | JavaScript (TypeScript optional) | TypeScript (first-class) |
+| **Architecture** | Unopinionated — you decide | Opinionated — modules, controllers, services |
+| **Routing** | Manual | Declarative via decorators |
+| **Dependency Injection** | Not built-in | Built-in IoC container |
+| **Project Structure** | No enforced structure | Enforced module-based structure |
+| **Learning Curve** | Low | Moderate |
+| **Best For** | Scripts, CLIs, small services | Enterprise APIs, large-scale apps |
+
+---
+
+## Conceptual Differences
+
+### Architecture
+Node.js gives you complete freedom — there is no enforced pattern. As the project grows, every team structures things differently, which can lead to inconsistency. NestJS enforces a module-based architecture where every feature lives in its own self-contained module (controller + service + module file). New developers always know exactly where to find things.
+
+### Dependency Injection
+In plain Node.js, you manually create and pass dependencies between files. In NestJS, an IoC (Inversion of Control) container manages all instances automatically. You declare what a class needs in its constructor, and NestJS provides it. This makes swapping real implementations for mocks in tests trivial.
+
+### Request Lifecycle
+Express middleware runs in whatever order you define with `app.use()`. NestJS has a fixed, predictable pipeline: **Middleware → Guards → Interceptors → Pipes → Route Handler → Interceptors → Exception Filters**. Each layer has a single responsibility and a defined place in the flow.
+
+### Error Handling
+In Node.js you must manually wrap logic in try/catch and define a global error handler yourself. In NestJS you simply throw a built-in exception (`NotFoundException`, `BadRequestException`, etc.) from anywhere, and the framework catches and formats it consistently.
+
+### TypeScript
+TypeScript is optional in Node.js and requires manual configuration. In NestJS it is built-in and central — decorators, DTOs, and interfaces are core to how the framework works.
+
+---
+
+## When to Use Which
+
+**Choose Node.js (+ Express/Fastify) when:**
+- Building a small service, script, or CLI tool
+- You need maximum flexibility and want to define your own architecture
+- The team prefers plain JavaScript with minimal setup
+
+**Choose NestJS when:**
+- Building a large-scale REST API or GraphQL API
+- The team needs consistent structure across a growing codebase
+- You want built-in support for WebSockets, microservices, or queues
+- Onboarding new developers quickly is a priority
+
+---
+
+## Resources
+
+- [Node.js Official Docs](https://nodejs.org/api/)
+- [NestJS Official Docs](https://docs.nestjs.com/)
+- [Express.js](https://expressjs.com/)
+- [Fastify](https://fastify.dev/)
