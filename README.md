@@ -1,104 +1,70 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 1. Controllers (@Controller)
+ Definition
+Controllers are responsible for handling incoming requests and returning responses to the client. In NestJS, a controller is a class decorated with @Controller(), which defines the routing path for the application.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+ Core Concepts
+1. Routing
+The routing mechanism determines which controller handles which request. By providing a path prefix in @Controller('stocks'), you can group related routes and avoid repetitive code.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+2. Request Object Access
+NestJS provides specific decorators to access parts of the HTTP request directly, ensuring type safety and readability.
 
-## Description
+@Body(): Access the request payload (e.g., POST data).
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+@Query(): Access URL query parameters (e.g., ?page=1).
 
-## Project setup
+@Param(): Access dynamic route parameters (e.g., :id).
 
-```bash
-$ npm install
-```
+@Headers(): Access HTTP headers.
 
-## Compile and run the project
+3. Standard Response Handling
+NestJS handles responses automatically:
 
-```bash
-# development
-$ npm run start
+If you return a JavaScript object or array, it is automatically serialized to JSON.
 
-# watch mode
-$ npm run start:dev
+If you return a primitive type (string, number), it is sent as-is.
 
-# production mode
-$ npm run start:prod
-```
+The default status code is 200 OK (except for POST, which is 201 Created).
 
-## Run tests
+ Code Implementation Example
+TypeScript
+import { Controller, Get, Post, Body, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { CreateStockDto } from './dto/create-stock.dto';
 
-```bash
-# unit tests
-$ npm run test
+@Controller('stocks')
+export class StocksController {
+  
+  // POST /stocks
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  create(@Body() createStockDto: CreateStockDto) {
+    return {
+      message: 'Stock record created',
+      data: createStockDto,
+    };
+  }
 
-# e2e tests
-$ npm run test:e2e
+  // GET /stocks?market=KOSPI
+  @Get()
+  findAll(@Query('market') market: string) {
+    return `This returns all stocks from ${market}`;
+  }
 
-# test coverage
-$ npm run test:cov
-```
+  // GET /stocks/AAPL
+  @Get(':symbol')
+  findOne(@Param('symbol') symbol: string) {
+    return `This returns details for stock: ${symbol}`;
+  }
+}
+ Why use Controllers? 
+Separation of Concerns: Controllers only handle the HTTP layer (routing, request parsing). They delegate "how" things are done to Services.
 
-## Deployment
+Declarative Programming: Using decorators makes the API structure visible at a glance, improving maintainability for large-scale projects like those at CitrusBits.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Platform Agnostic: By using decorators like @Req() and @Res(), NestJS can work on top of either Express or Fastify without changing the business logic.
+이 문서는 NestJS의 핵심 빌딩 블록과 데이터 흐름을 체계적으로 정리한 학습 기록입니다.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-#  NestJS Architecture Mastery: Overview
-
-This repository is a systematic record of learning the core building blocks and data flow of NestJS.
+# Total
 
 ##  0. Core Philosophy of NestJS
 NestJS is a framework built on top of **Node.js**, leveraging **TypeScript** as its primary language. Its main objective is to provide a **"Scalable, Loosely Coupled, and Highly Maintainable Server Architecture."**
