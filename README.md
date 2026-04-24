@@ -96,96 +96,87 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-# 🚀 NestJS Architecture Mastery: Overview
+#  NestJS Architecture Mastery: Overview
 
-이 문서는 NestJS의 핵심 빌딩 블록과 데이터 흐름을 체계적으로 정리한 학습 기록입니다.
+This repository is a systematic record of learning the core building blocks and data flow of NestJS.
 
-## 📌 0. NestJS의 핵심 철학
-NestJS는 **Node.js** 위에서 동작하는 프레임워크로, **TypeScript**를 기본으로 채택합니다. 
-가장 큰 목적은 **"확장 가능하고(Scalable), 느슨한 결합(Loosely coupled)을 가진 유지보수가 용이한 서버 아키텍처"**를 제공하는 것입니다. 
+##  0. Core Philosophy of NestJS
+NestJS is a framework built on top of **Node.js**, leveraging **TypeScript** as its primary language. Its main objective is to provide a **"Scalable, Loosely Coupled, and Highly Maintainable Server Architecture."**
 
 ---
 
-## 🔄 1. Request Lifecycle (요청 생명주기)
-클라이언트의 요청이 서버에 도달한 후 응답으로 돌아가기까지의 순서입니다.
+##  1. Request Lifecycle
+The following is the sequential execution flow from the moment a client request hits the server until a response is sent back.
 
 
 
 1. **Incoming Request**
-2. **Middleware**: 공통 로직(로깅, 쿠키 파싱 등) 처리.
-3. **Guards**: 인증(Authentication) 및 인가(Authorization) 체크.
-4. **Interceptors (Pre-handle)**: 핸들러 실행 전 데이터 가공이나 시간 측정.
-5. **Pipes**: 입력 데이터 검증(Validation) 및 타입 변환(Transformation).
-6. **Controller (Handler)**: 요청을 라우팅하고 비즈니스 로직으로 연결.
-7. **Service (Provider)**: 실제 비즈니스 로직 및 DB 연산 수행.
-8. **Interceptors (Post-handle)**: 응답 결과를 최종적으로 포장(Mapping).
-9. **Exception Filters**: 전 과정에서 발생한 에러를 처리하여 표준 응답 반환.
+2. **Middleware**: Handles common logic such as logging, cookie parsing, etc.
+3. **Guards**: Handles Authentication and Authorization checks.
+4. **Interceptors (Pre-handle)**: Executes logic before the handler (e.g., data transformation or performance timing).
+5. **Pipes**: Performs Input Data Validation and Transformation (e.g., string to int).
+6. **Controller (Handler)**: Routes the request and maps it to the appropriate business logic.
+7. **Service (Provider)**: Performs actual business logic and database operations.
+8. **Interceptors (Post-handle)**: Transforms or "wraps" the response data (Mapping).
+9. **Exception Filters**: Catches unhandled exceptions throughout the cycle and returns standardized error responses.
 
 ---
 
 ## 🛠 2. Core Building Blocks
 
-### 📦 Modules (`@Module`)
-- **역할**: 애플리케이션의 구조를 조직화하는 기본 단위.
-- **주요 속성**: `providers`, `controllers`, `imports`, `exports`.
+###  Modules (`@Module`)
+- **Role**: The fundamental unit used to organize the application structure.
+- **Key Properties**: `providers`, `controllers`, `imports`, `exports`.
 
-### 🎮 Controllers (`@Controller`)
-- **역할**: 외부로부터 들어오는 HTTP 요청을 받고 응답을 반환.
-- **특징**: 클래스와 데코레이터를 사용하여 라우팅 맵을 생성.
+###  Controllers (`@Controller`)
+- **Role**: Responsible for handling incoming HTTP requests and returning responses to the client.
+- **Features**: Uses classes and decorators to define routing maps.
 
-### 💉 Providers / Services (`@Injectable`)
-- **역할**: 비즈니스 로직의 실제 구현체.
-- **핵심 개념**: **의존성 주입(Dependency Injection)**. NestJS IoC 컨테이너가 인스턴스를 관리.
-
----
-
-## 🛡 3. Middleware, Guards, and Pipes
-
-### 🚦 Middleware
-- **특징**: 라우트 핸들러가 호출되기 **전**에 실행. `next()` 호출 필요.
-
-### 🛡 Guards (`CanActivate`)
-- **특징**: 미들웨어 다음, 파이프 전에 실행. 권한 체크(Admin 등)에 사용.
-
-### 🧪 Pipes (`PipeTransform`)
-- **용도**: 데이터 변환(`ParseIntPipe`) 및 유효성 검증(`ValidationPipe`).
+###  Providers / Services (`@Injectable`)
+- **Role**: The actual implementation of business logic.
+- **Core Concept**: **Dependency Injection (DI)**. Managed by the NestJS IoC (Inversion of Control) container.
 
 ---
 
-## 🕵️ 4. Advanced: Interceptors and Filters
+##  3. Middleware, Guards, and Pipes
 
-### 🕵️ Interceptors (`NestInterceptor`)
-- **용도**: 캐싱, 응답 포맷 통일, 요청/응답 시간 측정.
+###  Middleware
+- **Features**: Executed **before** the route handler. Requires calling the `next()` function to proceed.
 
-### ⚠️ Exception Filters (`@Catch`)
-- **용도**: 애플리케이션 전역에서 발생하는 에러 응답 형식을 커스텀화.
+###  Guards (`CanActivate`)
+- **Features**: Executed after middleware but before pipes. Used for permission checks (e.g., Admin roles).
+
+### Pipes (`PipeTransform`)
+- **Usage**: Data transformation (`ParseIntPipe`) and validation (`ValidationPipe`).
 
 ---
 
-## 📂 5. Recommended Folder Structure
+## 4. Advanced: Interceptors and Filters
+
+###  Interceptors (`NestInterceptor`)
+- **Usage**: Caching, standardizing response formats, and measuring request/response time.
+
+###  Exception Filters (`@Catch`)
+- **Usage**: Customizing the format of error responses generated globally across the application.
+
+---
+
+## 5. Recommended Folder Structure
 ```text
 src/
-├── common/             # 공통 가드, 인터셉터, 필터
-├── modules/            # 도메인별 기능 모듈
-│   ├── stocks/         # 예: 주식 데이터 모듈
-│   │   ├── dto/
+├── common/             # Global guards, interceptors, filters, etc.
+├── modules/            # Feature-based domain modules
+│   ├── stocks/         # Example: Stock data module
+│   │   ├── dto/        # Data Transfer Objects
 │   │   ├── controllers/
 │   │   ├── services/
 │   │   └── stocks.module.ts
 ├── app.module.ts       # Root Module
 └── main.ts             # Entry Point
-### 4. 저장 및 종료
-* **nano**를 사용 중이라면: `Ctrl + O` (저장) -> `Enter` -> `Ctrl + X` (종료)
-* **vi**를 사용 중이라면: `Esc` 누른 후 `:wq` 입력 -> `Enter`
 
----
+- How to Save and Exit (Terminal)
+If using nano: Ctrl + O (Save) -> Enter -> Ctrl + X (Exit)
 
-### 5. Git 커밋 (기록 남기기)
-이제 문서가 완성되었으니 Git에 기록을 남기세요.
-
-```bash
-git add README.md
-git commit -m "docs: update comprehensive overview guide in README"
-git push origin main
+If using vi: Press Esc -> Type :wq -> Enter  
 
 
