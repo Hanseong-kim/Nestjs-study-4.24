@@ -122,7 +122,7 @@ The following is the sequential execution flow from the moment a client request 
 
 ---
 
-## 🛠 2. Core Building Blocks
+## 2. Core Building Blocks
 
 ###  Modules (`@Module`)
 - **Role**: The fundamental unit used to organize the application structure.
